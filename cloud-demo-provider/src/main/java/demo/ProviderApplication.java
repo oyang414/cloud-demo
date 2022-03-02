@@ -1,5 +1,8 @@
 package demo;
 
+import demo.config.DataSourceInitFunc;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -18,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 @EnableDiscoveryClient
 public class ProviderApplication {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ProviderApplication.class, args);
        /* while (true) {
             String userName = applicationContext.getEnvironment().getProperty("user.name");
