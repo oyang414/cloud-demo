@@ -1,0 +1,54 @@
+spring:
+  # 激活不同profile的配置
+  #profiles:
+    #active: prod
+  application:
+    name: cloud-demo-provider # 端口已经配置到 -NACOS 注册中心.这个要和 Nacos 的 Data ID 前缀一致
+  cloud:
+    # nacos相关配置
+    nacos:
+      config:
+        server-addr: 139.198.183.194:8848 # 配置文件的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 配置命名空间
+        file-extension: yaml # 配置以yaml的形式----不配置就拉取不到\
+        # 读取多个配置
+        shared-configs[0]:
+          data-id: base.yaml
+        shared-configs[1]:
+          data-id: common.yaml
+          # 设置动态刷新
+          refresh: true
+      discovery:
+        server-addr: 139.198.183.194:8848 # 注册中心的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 注册命名空间
+    # sentinel限流监控中心
+    sentinel:
+      transport:
+        dashboard: localhost:8010
+        port: 8723
+      eager: true
+      # sentinel nacos 相关配置 动态数据源
+      datasource:
+        # 限流规则flow
+        ds1:
+          nacos:
+            namespase: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce
+            server-addr: 139.198.183.194:8848
+            dataId: cloud-demo-provider-flow
+            data-type: json
+            rule-type: flow
+        # 熔断规则degrade
+        ds2:
+          nacos:
+            namespase: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce
+            server-addr: 139.198.183.194:8848
+            dataId: cloud-demo-provider-degrade
+            data-type: json
+            rule-type: degrade
+
+# Endpoint 信息暴露
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

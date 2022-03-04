@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: cloud-demo-consumer # 端口已经配置到 -NACOS 注册中心
+  cloud:
+    # nacos相关配置
+    nacos:
+      config:
+        server-addr: 139.198.183.194:8848 # 配置文件的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 配置命名空间
+        file-extension: yaml # 配置以yaml的形式----不配置就拉取不到
+      discovery:
+        server-addr: 139.198.183.194:8848 # 注册中心的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 注册命名空间
+    # sentinel限流监控中心
+    sentinel:
+      transport:
+        dashboard: localhost:8010
+        port: 8722
+      eager: true
+      # sentinel nacos 相关配置 动态数据源
+      datasource:
+        # 限流规则flow
+        ds1:
+          nacos:
+            namespase: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce
+            server-addr: 139.198.183.194:8848
+            dataId: cloud-demo-consumer-flow
+            data-type: json
+            rule-type: flow
+        # 熔断规则degrade
+        ds2:
+          nacos:
+            namespase: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce
+            server-addr: 139.198.183.194:8848
+            dataId: cloud-demo-consumer-degrade
+            data-type: json
+            rule-type: degrade
+    gateway:
+      routes:
+      - id: cloud-demo-consumer-route
+        #uri: lb://cloud-demo-provider
+        uri: http://localhost:8070/provider/echo
+        predicates:
+          - Path=/echo
+      #- id: spring_route
+       # uri: https://spring.io/projects/spring-cloud
+        #predicates:
+         # - Path=/spring-cloud
+# Endpoint 信息暴露
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+#Feign對sentinel的支持
+feign:
+  sentinel:
+    enabled: true

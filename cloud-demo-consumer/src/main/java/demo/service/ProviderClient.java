@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @Author ouyangxingjie
- * @Description
+ * @Description ProviderClient
  * @Date 16:57 2022/3/3
  */
-@FeignClient(name = "cloud-demo-provider")
+//如果提供方的接口用了@SentinelResource,优先级会比该处的fallback高
+//@FeignClient(name = "cloud-demo-provider" ,fallback = ProviderFallback.class)
+@FeignClient(name = "cloud-demo-provider" )
 public interface ProviderClient {
 
     /**
