@@ -3,8 +3,11 @@ package demo.controller;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -18,14 +21,21 @@ import static java.lang.Thread.sleep;
  */
 @RestController
 @RequestMapping("/provider")
+@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
 public class ProviderController {
 
-    @Autowired
-    private LoadBalancerClient loadBalancerClient;
+    @Value("${user.name}")
+    private String userName;
+    @Value("${user.age}")
+    private String userAge;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
+    /**
+     * @Author ouyangxingjie
+     * @Description echo方法
+     * @Date 17:14 2022/3/3
+     * @param name 名称
+     * @return java.lang.String
+     */
     //fallback：失败调用，若本接口出现未知异常，则调用fallback指定的接口。
     //blockHandler：sentinel定义的失败调用或限制调用，若本次访问被限流或服务降级，则调用blockHandler指定的接口。
     @RequestMapping("/echo")
@@ -46,6 +56,18 @@ public class ProviderController {
         // Do some log here.
         ex.printStackTrace();
         return "provider: 违反sentinel配置的规则，进行服务降级 " + name;
+    }
+
+    /**
+     * @Author ouyangxingjie
+     * @Description 查询 通过@RefreshScope注解动态获取nacos配置中心的用户信息
+     * @Date 17:16 2022/3/3
+     * @return java.lang.String
+     */
+    //动态获取nacos配置中心的 user.name ,user.age
+    @RequestMapping("/user")
+    public String getUser(){
+        return "user: [name:" + userName + "," + "age:" + userAge +"]";
     }
 
 }

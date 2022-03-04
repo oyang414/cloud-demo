@@ -2,6 +2,7 @@ package demo.controller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import demo.service.ProviderClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
@@ -25,11 +26,21 @@ public class ConsumerController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private ProviderClient providerClient;
+
+    /**
+     * @Author ouyangxingjie
+     * @Description 使用restTemplate调用provider服务
+     * @Date 17:12 2022/3/3
+     * @param name 姓名
+     * @return java.lang.String
+     */
     @RequestMapping("/echo")
     @SentinelResource(value = "consumer_hello", blockHandler = "exceptionHandler", fallback = "helloFallback")
     public String echo(@RequestParam("name") String name) throws Exception{
         //int a = 1/0;
-        Thread.sleep(1000);
+        //Thread.sleep(1000);
         ServiceInstance serviceInstance = loadBalancerClient.choose("cloud-demo-provider");
         String path = String.format("http://%s:%s/provider/echo?name=%s",serviceInstance.getHost(),serviceInstance.getPort(),name);
         System.out.println("request path:" + path);
@@ -45,5 +56,17 @@ public class ConsumerController {
         // Do some log here.
         ex.printStackTrace();
         return "consumer: 违反sentinel配置的规则，进行服务降级 " + name;
+    }
+
+    /**
+     * @Author ouyangxingjie
+     * @Description 使用Feign组件调用provider服务
+     * @Date 17:11 2022/3/3
+     * @param name 姓名
+     * @return java.lang.String
+     */
+    @RequestMapping("/feign_echo")
+    public String feignEcho(@RequestParam("name") String name) throws Exception{
+        return providerClient.echo(name);
     }
 }

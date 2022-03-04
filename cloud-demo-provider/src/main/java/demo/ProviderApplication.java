@@ -1,16 +1,9 @@
 package demo;
 
-import demo.config.DataSourceInitFunc;
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author ouyangxingjie
@@ -33,12 +26,6 @@ public class ProviderApplication {
             System.err.println("base.content :" + baseContent);
             TimeUnit.SECONDS.sleep(1);
         }*/
-    }
-
-    @Bean
-    public RestTemplate restTemplate(){
-
-        return new RestTemplate();
     }
 
 }
