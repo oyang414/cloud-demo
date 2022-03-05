@@ -36,16 +36,33 @@ spring:
             data-type: json
             rule-type: degrade
     gateway:
+      discovery:
+        locator:
+          enabled: true  #表明gateway开启服务注册和发现的功能，并且spring cloud gateway自动根据服务发现为每一个服务创建了一个router，这个router将以服务名开头的请求路径转发到对应的服务
+          lower-case-service-id: true  #是将请求路径上的服务名配置为小写（因为服务注册的时候，向注册中心注册时将服务名转成大写的了
       routes:
-      - id: cloud-demo-consumer-route
-        #uri: lb://cloud-demo-provider
-        uri: http://localhost:8070/provider/echo
+      - id: echo-route
+        uri: http://localhost:8070
         predicates:
-          - Path=/echo
-      #- id: spring_route
-       # uri: https://spring.io/projects/spring-cloud
-        #predicates:
-         # - Path=/spring-cloud
+          - Path=/test/provider/echo
+        #前缀处理 网关发送/test/provider/echo，最后会处理成/provider/echo
+        filters:
+          - StripPrefix=1
+      - id: spring-route
+        uri: https://spring.io/projects
+        predicates:
+          - Path=/spring-cloud
+      - id: provider-route
+        #cloud-demo-provider为微服务在nacos中注册的服务名称
+        uri: lb://cloud-demo-provider
+        predicates:
+          #转发的路径需要是在微服务真实存在的路径
+          - Path=/provider/** # 转发该路径
+        filters:
+          #自定义的过滤器类名是MyGateWayFilter,此处配置只需要配置GateWayFilter之前的前缀my就行
+          - My
+  main:
+    allow-bean-definition-overriding: true
 # Endpoint 信息暴露
 management:
   endpoints:

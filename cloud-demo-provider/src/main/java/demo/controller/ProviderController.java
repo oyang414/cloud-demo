@@ -39,7 +39,7 @@ public class ProviderController {
     //fallback：失败调用，若本接口出现未知异常，则调用fallback指定的接口。
     //blockHandler：sentinel定义的失败调用或限制调用，若本次访问被限流或服务降级，则调用blockHandler指定的接口。
     @RequestMapping("/echo")
-    //@SentinelResource(value = "provider_hello", blockHandler = "exceptionHandler", fallback = "helloFallback")
+    @SentinelResource(value = "provider_hello", blockHandler = "exceptionHandler", fallback = "helloFallback")
     public String echo(String name) throws Exception{
         //int a = 1/0;
         System.out.println("生产者收到消息："+name);
