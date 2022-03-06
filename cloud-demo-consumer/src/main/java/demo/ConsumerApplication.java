@@ -20,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 public class ConsumerApplication {
 
     public static void main(String[] args) {
-        System.setProperty("csp.sentinel.app.type", "1");
         SpringApplication.run(ConsumerApplication.class, args);
     }
 

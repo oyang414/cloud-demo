@@ -45,11 +45,11 @@ public class DataSourceInitFunc {
             }
             //加载 degrade 熔断规则
             if(RuleType.DEGRADE.equals(nacos.getRuleType())){
-                ReadableDataSource<String, List<DegradeRule>> flowRuleDataSource = new NacosDataSource<>(
+                ReadableDataSource<String, List<DegradeRule>> degradeRuleDataSource = new NacosDataSource<>(
                         nacos.getServerAddr(), nacos.getGroupId(), nacos.getDataId(),
                         source -> JSON.parseObject(source, new TypeReference<List<DegradeRule>>() {
                         }));
-                DegradeRuleManager.register2Property(flowRuleDataSource.getProperty());
+                DegradeRuleManager.register2Property(degradeRuleDataSource.getProperty());
             }
             // TODO:热点和系统规则和上述两个规则类似，懒得写了
         });

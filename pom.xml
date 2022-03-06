@@ -11,7 +11,7 @@
     <modules>
         <module>cloud-demo-provider</module>
         <module>cloud-demo-consumer</module>
-        <!--<module>cloud-demo-gateway-api</module>-->
+        <module>cloud-demo-gateway</module>
     </modules>
     <packaging>pom</packaging>
 

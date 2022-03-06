@@ -1,0 +1,7 @@
+[
+  {
+    "resource": "provider-route-local",
+    "count": 1,
+    "intervalSec":1
+  }
+]

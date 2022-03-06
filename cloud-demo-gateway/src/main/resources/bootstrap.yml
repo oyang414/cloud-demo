@@ -1,0 +1,90 @@
+spring:
+  application:
+    name: cloud-demo-gateway
+  cloud:
+    # nacos相关配置
+    nacos:
+      config:
+        server-addr: 139.198.183.194:8848 # 配置文件的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 配置命名空间
+        file-extension: yaml # 配置以yaml的形式----不配置就拉取不到
+      discovery:
+        server-addr: 139.198.183.194:8848 # 注册中心的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 注册命名空间
+    # sentinel限流监控中心
+    sentinel:
+      transport:
+        dashboard: localhost:8010
+        port: 8721
+      eager: true #取消控制台懒加载
+      #通过配置自定义降级响应
+      #scg:
+        #fallback:
+          #mode: response
+          #response-body: '{"code":403,"mes":"gateway:限流了"}'
+          #response-status: 403
+      datasource:
+        #================================ 踩坑总结 ================================
+        #注意：由于datasource 实现的数据结构是 TreeMap，那么他会根据key进行大小排序，以下面的例子举例就是 ds1、ds2
+        #这时，如果你配置的是不同的数据源（ds1为 nacos，ds2为本地 json文件），并且 rule-type是相同的，那么key大的会将key小的配置给覆盖
+        #=========================================================================
+        ds1:
+          nacos:
+            server-addr: 139.198.183.194:8848
+            namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce
+            dataId: cloud-demo-gateway-flow
+            data-type: json
+            rule-type: gw-flow
+        #本地文件数据源
+        #ds2:
+          #file:
+            #file: "classpath: gateway.json"
+            #rule-type: gw-flow
+    gateway:
+      discovery:
+        locator:
+          enabled: true  #表明gateway开启服务注册和发现的功能，并且spring cloud gateway自动根据服务发现为每一个服务创建了一个router，这个router将以服务名开头的请求路径转发到对应的服务
+          lower-case-service-id: true  #是将请求路径上的服务名配置为小写（因为服务注册的时候，向注册中心注册时将服务名转成大写的了
+      routes:
+      - id: echo-route
+        uri: http://localhost:8070 #目标URI,路由到微服务的地址
+        #================================ 踩坑总结 ================================
+        #路径匹配：将请求中 Path之前的路径去掉，转发的请求路径为 uri+Path
+        #例如：uri=http://localhost:8070 Path=/provider/echo,那么请求路径为 http://localhost:8070/provider/echo
+        #如果 uri=http://localhost:8070/provider, gateway也只会将uri截取为 http://localhost:8070
+        #因此写成 uri=http://localhost:8070/provider Path=/echo, 那么最后的请求路径为 http://localhost:8070/echo,所以会报404
+        #而 spring-route这个路由的例子，他妈的个B有误导性，uri=https://spring.io/projects, Path=/spring-cloud
+        #以上述规律可得知，最后的请求路径为 https://spring.io/spring-cloud，讲道理应该也是会报 404
+        #可是我们 “聪明的” spring官网对于这个请求路径进行了处理，将 https://spring.io/spring-cloud自动处理为了https://spring.io/projects/spring-cloud
+        #导致我认为 uri=http://localhost:8070/provider Path=/echo这个组合最后的请求路径也就是简单的 uri+Path，即http://localhost:8070/provider/echo
+        #=========================================================================
+        predicates:
+          - Path=/test/provider/echo # 匹配对应的URL请求，将匹配到的请求追加在目标 URI 之后
+        #前缀处理 网关发送/test/provider/echo，最后会处理成/provider/echo
+        filters:
+          - StripPrefix=1
+      - id: spring-route
+        uri: https://spring.io/projects
+        predicates:
+          - Path=/spring-cloud
+      - id: provider-route
+        #cloud-demo-provider为微服务在nacos中注册的服务名称
+        uri: lb://cloud-demo-provider
+        predicates:
+          #转发的路径需要是在微服务真实存在的路径
+          - Path=/provider/** # 转发该路径
+        filters:
+          #自定义的过滤器类名是MyGateWayFilter,此处配置只需要配置GateWayFilter之前的前缀my就行
+          - My
+      - id: consumer-route
+        uri: lb://cloud-demo-consumer
+        predicates:
+          - Path=/consumer/**
+  main:
+    allow-bean-definition-overriding: true
+# Endpoint 信息暴露
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

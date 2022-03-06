@@ -1,3 +1,4 @@
+
 package demo.service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -23,11 +24,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+
 /**
  * @description: gateway动态路由配置
  * @author: ouyangxingjie
  * @create: 2022/3/5 10:55
  **/
+
 @Component
 @Slf4j
 public class NacosDynamicRouteService implements ApplicationEventPublisherAware {

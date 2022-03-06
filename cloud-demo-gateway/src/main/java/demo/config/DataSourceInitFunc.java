@@ -3,8 +3,12 @@ package demo.config;
 import com.alibaba.cloud.sentinel.SentinelProperties;
 import com.alibaba.cloud.sentinel.datasource.RuleType;
 import com.alibaba.cloud.sentinel.datasource.config.NacosDataSourceProperties;
+import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule;
+import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayRuleManager;
 import com.alibaba.csp.sentinel.datasource.ReadableDataSource;
 import com.alibaba.csp.sentinel.datasource.nacos.NacosDataSource;
+import com.alibaba.csp.sentinel.property.DynamicSentinelProperty;
+import com.alibaba.csp.sentinel.property.SentinelProperty;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
@@ -15,8 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
+import java.util.Set;
 
 /**
  * @Author ouyangxingjie
@@ -36,23 +41,15 @@ public class DataSourceInitFunc {
             return map.getValue().getNacos() != null;
         }).forEach(map -> {
             NacosDataSourceProperties nacos = map.getValue().getNacos();
-            //加载 flow 限流规则
-            if(RuleType.FLOW.equals(nacos.getRuleType())) {
-                ReadableDataSource<String, List<FlowRule>> flowRuleDataSource = new NacosDataSource<>(
+            //加载 gateway flow 限流规则
+            if(RuleType.GW_FLOW.equals(nacos.getRuleType())) {
+                System.err.println("开始加载...");
+                ReadableDataSource<String, Set<GatewayFlowRule>> gatewayDataSource = new NacosDataSource<>(
                         nacos.getServerAddr(), nacos.getGroupId(), nacos.getDataId(),
-                        source -> JSON.parseObject(source, new TypeReference<List<FlowRule>>() {
+                        source -> JSON.parseObject(source, new TypeReference<Set<GatewayFlowRule>>() {
                         }));
-                FlowRuleManager.register2Property(flowRuleDataSource.getProperty());
+                GatewayRuleManager.register2Property(gatewayDataSource.getProperty());
             }
-            //加载 degrade 熔断规则
-            if(RuleType.DEGRADE.equals(nacos.getRuleType())){
-                ReadableDataSource<String, List<DegradeRule>> degradeRuleDataSource = new NacosDataSource<>(
-                        nacos.getServerAddr(), nacos.getGroupId(), nacos.getDataId(),
-                        source -> JSON.parseObject(source, new TypeReference<List<DegradeRule>>() {
-                        }));
-                DegradeRuleManager.register2Property(degradeRuleDataSource.getProperty());
-            }
-            // TODO:热点和系统规则和上述两个规则类似，懒得写了
         });
         return new DataSourceInitFunc();
     }

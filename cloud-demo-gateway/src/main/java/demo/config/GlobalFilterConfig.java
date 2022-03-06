@@ -1,16 +1,9 @@
-package demo.config;/**
- * @Author ouyangxingjie
- * @Description
- * @Date 12:18 2022/3/5
- */
+package demo.config;
 
-import com.alibaba.csp.sentinel.adapter.gateway.sc.SentinelGatewayFilter;
-import com.alibaba.csp.sentinel.annotation.aspectj.SentinelResourceAspect;
 import demo.filter.MyGlobalFilter;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 /**
