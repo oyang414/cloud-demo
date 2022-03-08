@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 /**
  * @Author ouyangxingjie
@@ -29,6 +31,10 @@ public class ConsumerController {
     @Autowired
     private ProviderClient providerClient;
 
+    //使用loadbalancer做负载均衡时所需要
+    /*@Autowired
+    private WebClient.Builder webClientBuilder;*/
+
     /**
      * @Author ouyangxingjie
      * @Description 使用restTemplate调用provider服务
@@ -37,14 +43,22 @@ public class ConsumerController {
      * @return java.lang.String
      */
     @RequestMapping("/echo")
-    @SentinelResource(value = "consumer_hello", blockHandler = "exceptionHandler", fallback = "helloFallback")
+    @SentinelResource(value = "consumer_hello", blockHandler = "exceptionHandler")
     public String echo(@RequestParam("name") String name) throws Exception{
         //int a = 1/0;
         //Thread.sleep(1000);
-        ServiceInstance serviceInstance = loadBalancerClient.choose("cloud-demo-provider");
+        /*ServiceInstance serviceInstance = loadBalancerClient.choose("cloud-demo-provider");
         String path = String.format("http://%s:%s/provider/echo?name=%s",serviceInstance.getHost(),serviceInstance.getPort(),name);
         System.out.println("request path:" + path);
-        return restTemplate.getForObject(path,String.class);
+        return restTemplate.getForObject(path,String.class);*/
+        return restTemplate.getForObject("http://cloud-demo-provider/provider/echo?name="+name,String.class);
+        /**
+         *  以下是使用 loadbalancer做负载均衡，使用webClientBuilder以下写法
+         *  uri://微服务名称 + /请求路径
+         */
+        /*return webClientBuilder.build().get().uri("http://cloud-demo-provider/provider/echo?name="+name)
+                .retrieve().bodyToFlux(String.class);*/
+
     }
     // Fallback 函数，函数签名与原函数一致或加一个 Throwable 类型的参数.
     public String helloFallback(String name) {

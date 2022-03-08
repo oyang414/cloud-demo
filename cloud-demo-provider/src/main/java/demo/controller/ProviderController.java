@@ -43,7 +43,7 @@ public class ProviderController {
     public String echo(String name) throws Exception{
         //int a = 1/0;
         System.out.println("生产者收到消息："+name);
-        return "hello,"+ name;
+        return "master:hello,"+ name;
     }
 
     // Fallback 函数，函数签名与原函数一致或加一个 Throwable 类型的参数.
@@ -67,7 +67,7 @@ public class ProviderController {
     //动态获取nacos配置中心的 user.name ,user.age
     @RequestMapping("/user")
     public String getUser(){
-        return "user: [name:" + userName + "," + "age:" + userAge +"]";
+        return "master:user: [name:" + userName + "," + "age:" + userAge +"]";
     }
 
 }

@@ -12,6 +12,7 @@
         <module>cloud-demo-provider</module>
         <module>cloud-demo-consumer</module>
         <module>cloud-demo-gateway</module>
+        <!--<module>cloud-demo-provider-slave</module>-->
     </modules>
     <packaging>pom</packaging>
 
@@ -54,6 +55,12 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+          <!--  <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+                </exclusion>
+            </exclusions>-->
         </dependency>
 
         <!--sentinel-->
@@ -89,6 +96,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <!--loadbalancer-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
         <!--springboot程序的监控系统 -->
         <dependency>

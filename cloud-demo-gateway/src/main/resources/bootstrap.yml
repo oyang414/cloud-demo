@@ -80,11 +80,26 @@ spring:
         uri: lb://cloud-demo-consumer
         predicates:
           - Path=/consumer/**
+    # springCloud禁用ribbon（使用loadbalancer做负载均衡时所需要）
+    #loadbalancer:
+      #ribbon:
+        #enabled: false
   main:
     allow-bean-definition-overriding: true
+
 # Endpoint 信息暴露
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+
+#ribbon配置负载均衡策略
+#cloud-demo-provider: #微服务名称
+  #ribbon:
+    #NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+# 使用spring loadbalancer做负载均衡，nacos弃用ribbon（但是目前loadbalancer不好用）
+#ribbon:
+  #nacos:
+    #enabled: false

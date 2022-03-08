@@ -35,6 +35,10 @@ spring:
             dataId: cloud-demo-consumer-degrade
             data-type: json
             rule-type: degrade
+    # springCloud禁用ribbon（使用loadbalancer做负载均衡时所需要）
+    #loadbalancer:
+      #ribbon:
+        #enabled: false
 # Endpoint 信息暴露
 management:
   endpoints:
@@ -46,3 +50,8 @@ management:
 feign:
   sentinel:
     enabled: true
+
+# 使用spring loadbalancer做负载均衡，nacos弃用ribbon（但是目前loadbalancer不好用）
+#ribbon:
+  #nacos:
+    #enabled: false
