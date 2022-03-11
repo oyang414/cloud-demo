@@ -1,5 +1,5 @@
-server:
-  port: 8070
+#server:
+  #port: 8070
 spring:
   # 激活不同profile的配置
   #profiles:

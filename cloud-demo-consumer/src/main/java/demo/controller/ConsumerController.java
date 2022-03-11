@@ -4,14 +4,15 @@ import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import demo.service.ProviderClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import rx.Observable;
+import rx.Observer;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 
 /**
  * @Author ouyangxingjie
@@ -31,7 +32,7 @@ public class ConsumerController {
     @Autowired
     private ProviderClient providerClient;
 
-    //使用loadbalancer做负载均衡时所需要
+    //使用loadbalancer（webflux的情况下）并且做负载均衡时所需要
     /*@Autowired
     private WebClient.Builder webClientBuilder;*/
 
@@ -83,4 +84,34 @@ public class ConsumerController {
     public String feignEcho(@RequestParam("name") String name) throws Exception{
         return providerClient.echo(name);
     }
+
+    // RxJava简单demo
+  /*  public static void main(String[] args){
+
+        Observable.just("Hello","Hi","World")
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(new Observer<String>() {
+                    String name = "";
+                    @Override
+                    public void onCompleted() {
+                        System.out.println("completed...");
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        System.err.println("Error...");
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        System.out.println("onNext:"+ s );
+                        name = name +s;
+                        if(name.length()>7){
+                            int a = 1/0;
+                        }
+                        System.out.println("name:"+name);
+                    }
+                });
+    }*/
 }

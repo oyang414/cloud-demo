@@ -12,7 +12,6 @@
         <module>cloud-demo-provider</module>
         <module>cloud-demo-consumer</module>
         <module>cloud-demo-gateway</module>
-        <!--<module>cloud-demo-provider-slave</module>-->
     </modules>
     <packaging>pom</packaging>
 

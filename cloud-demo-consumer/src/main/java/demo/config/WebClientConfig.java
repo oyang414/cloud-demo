@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
- * @description: loadbalancer请求客户端配置
+ * @description: loadbalancer请求客户端配置（webflux的情况下）
  * @author: ouyangxingjie
  * @create: 2022/3/8 18:49
  **/
