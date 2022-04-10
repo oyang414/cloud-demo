@@ -18,4 +18,7 @@ public interface StorageClient {
     @GetMapping(value = "/storage/reduce")
     Map<String,Object> reduce(@RequestParam("code") String code, @RequestParam("nums") Integer nums);
 
+
+    @GetMapping(value = "/storageTcc/insert")
+    String insert(@RequestParam("code") String code);
 }
