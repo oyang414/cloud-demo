@@ -1,0 +1,78 @@
+server:
+  port: 9092
+spring:
+  #mysql数据源
+  datasource:
+    url: jdbc:mysql://139.198.183.194:3306/fbyx?characterEncoding=utf8
+    username: root
+    password: qawsede2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 初始化大小，最小，最大
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 300000
+    #hikari:
+      #max-lifetime: 300000
+  application:
+    name: cloud-demo-storage # 端口已经配置到 -NACOS 注册中心
+  cloud:
+    # nacos相关配置
+    nacos:
+      config:
+        server-addr: 139.198.183.194:8848 # 配置文件的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 配置命名空间
+        file-extension: yaml # 配置以yaml的形式----不配置就拉取不到
+      discovery:
+        server-addr: 139.198.183.194:8848 # 注册中心的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 注册命名空间
+        group: SEATA_GROUP
+seata:
+  application-id: cloud-demo-storage #和application-name保持一致
+    # 事务分组：事务分组是seata的资源逻辑，如果seata-server是个集群，可以作为资源（服务器/节点）的逻辑隔离单位，
+    # spring-boot（客户端）中tx-service-group的值（分组名称，例如order-service-group）需要与seate-server（服务端）配置好的分组名称（order-service-group）对应，
+    # 从而找到事务组集群的名称（例如default），在通过service.集群名.grouplist（service.default.grouplist）
+    # 找到 TC 服务地址，从而进行连接并开始整个分布式事务流程
+    # Q：是不是一个事务中所有的微服务都必须是同一组才行？
+    # A：没有这个要求的。但是不同的分组需要映射到同一个集群上。
+  tx-service-group: storage-service-group # 事务分组名称 一定要与seataServer.properties的配置对应，不然找不到TC集群名称，也就找不到TC服务地址了
+  # 数据源自动代理设置为false，默认为true
+  # 如果设置为false，需要手动设置数据源代理
+  enable-auto-data-source-proxy: false
+  config:
+    type: nacos
+    nacos:
+      server-addr: 139.198.183.194:8848
+      group: SEATA_GROUP
+      namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce
+      username: nacos
+      password: nacos
+      data-id: seataServer.properties
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 139.198.183.194:8848
+      # 微服务必须在一个组，否则服务发现不了，但 seata-server 可以在不同的组中
+      group: SEATA_GROUP
+      namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce
+      username: nacos
+      password: nacos
+      # seata服务端应用名称
+      application: seata-server
+      #可写可不写
+  #service:
+    #vgroup-mapping:
+      #storage-service-group: default
+# Endpoint 信息暴露
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

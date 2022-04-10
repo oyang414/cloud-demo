@@ -1,4 +1,10 @@
 spring:
+  #mysql数据源
+  datasource:
+    url: jdbc:mysql://139.198.183.194:3306/fbyx?characterEncoding=utf8
+    username: root
+    password: qawsede2
+    driver-class-name: com.mysql.cj.jdbc.Driver
   application:
     name: cloud-demo-consumer # 端口已经配置到 -NACOS 注册中心
   cloud:

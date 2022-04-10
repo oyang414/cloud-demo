@@ -1,0 +1,53 @@
+server:
+  port: 9091
+spring:
+  #mysql数据源
+  datasource:
+    url: jdbc:mysql://139.198.183.194:3306/fbyx?characterEncoding=utf8
+    username: root
+    password: qawsede2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      max-lifetime: 300000
+  application:
+    name: cloud-demo-order # 端口已经配置到 -NACOS 注册中心
+  cloud:
+    # nacos相关配置
+    nacos:
+      config:
+        server-addr: 139.198.183.194:8848 # 配置文件的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 配置命名空间
+        file-extension: yaml # 配置以yaml的形式----不配置就拉取不到
+      discovery:
+        server-addr: 139.198.183.194:8848 # 注册中心的地址
+        namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce # 注册命名空间
+        group: SEATA_GROUP
+seata:
+  application-id: cloud-demo-order #和application-name保持一致
+  tx-service-group: order-service-group
+  config:
+    type: nacos
+    nacos:
+      server-addr: 139.198.183.194:8848
+      group: SEATA_GROUP
+      namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce
+      username: nacos
+      password: nacos
+      data-id: seataServer.properties
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 139.198.183.194:8848
+      # 微服务必须在一个组，否则服务发现不了，但 seata-server 可以在不同的组中
+      group: SEATA_GROUP
+      namespace: 93c6a9f0-8484-4db1-a6d0-e7926c8225ce
+      username: nacos
+      password: nacos
+      cluster: default
+
+# Endpoint 信息暴露
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

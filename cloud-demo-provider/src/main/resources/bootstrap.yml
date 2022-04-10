@@ -1,6 +1,12 @@
 #server:
   #port: 8070
 spring:
+  #mysql数据源
+  datasource:
+    url: jdbc:mysql://139.198.183.194:3306/fbyx?characterEncoding=utf8
+    username: root
+    password: qawsede2
+    driver-class-name: com.mysql.cj.jdbc.Driver
   # 激活不同profile的配置
   #profiles:
     #active: prod

@@ -12,7 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author ouyangxingjie
@@ -44,4 +46,21 @@ public class DecoderConfig {
             setSupportedMediaTypes(mediaTypes);
         }
     }
+    public static void main(){
+        Set<String> set1 = new HashSet<>();
+        Set<String> set2 = new HashSet<>();
+
+        set1.add("a");
+        set1.add("b");
+        set1.add("c");
+
+        set2.add("c");
+        set2.add("d");
+        set2.add("e");
+
+        //交集
+        set1.retainAll(set2);
+        System.out.println("交集是 " + set1);  //交集是 [c]
+    }
+
 }
