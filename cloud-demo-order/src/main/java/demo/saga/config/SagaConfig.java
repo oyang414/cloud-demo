@@ -1,14 +1,10 @@
 package demo.saga.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import io.seata.rm.datasource.DataSourceProxy;
 import io.seata.saga.engine.config.DbStateMachineConfig;
 import io.seata.saga.engine.impl.ProcessCtrlStateMachineEngine;
 import io.seata.saga.rm.StateMachineEngineHolder;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
@@ -18,7 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @Author ouyangxingjie
- * @Description
+ * @Description Saga相关配置
  * @Date 22:13 2022/4/13
  */
 @Configuration
@@ -47,7 +43,8 @@ public class SagaConfig {
          *具体代码见StateMachineRepositoryImpl类registryStateMachine方法
          *这个注册的触发方法在DefaultStateMachineConfig的初始化方法init()，这个类是DbStateMachineConfig的父类
          */
-        dbStateMachineConfig.setResources(new PathMatchingResourcePatternResolver().getResources("classpath*:statelang/reduce_inventory_and_balance.json"));//json文件
+        //状态机json文件
+        dbStateMachineConfig.setResources(new PathMatchingResourcePatternResolver().getResources("classpath*:statelang/reduce_inventory_and_balance.json"));
         dbStateMachineConfig.setEnableAsync(true);
         dbStateMachineConfig.setApplicationId("cloud-demo-order");
         dbStateMachineConfig.setTxServiceGroup("order-service-group");

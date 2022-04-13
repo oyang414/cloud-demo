@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * @Author ouyangxingjie
- * @Description orderTcc Controller接口
+ * @Description 订单Controller（TCC模式）
  * @Date 14:40 2022/4/10
  */
 @RestController
